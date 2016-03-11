@@ -36,15 +36,75 @@ import com.svail.util.Tool;
 public class Histogram {
 
 	public static void main(String[] args) {
-		//AmountsSort("D:/Test/吉林省白山市八道江区.txt");
-
+		
+		//AmountsSort("D:/Test/浙江省温州市苍南县.txt");
+		
+		
+		
+/* 
+		 
 		JFrame frame = new JFrame("Java数据统计图");
 		frame.setLayout(new GridLayout(2, 2, 10, 10));
-		new Histogram("D:/Test/吉林省白山市八道江区-sort.txt");
+		new Histogram("D:/Test/浙江省温州市苍南县-sort-pc.txt");
 		frame.add(Histogram.getChartPanel());
-		frame.setBounds(50, 50, 800, 600);
+		frame.setBounds(50, 50, 1200, 1000);
 		frame.setVisible(true);
+		*/ 
+		
+		//System.out.println(P_rand(5));
+		PrincipalComponent1("D:/Test/浙江省温州市苍南县-sort.txt");
+		
 	}
+	public static void PrincipalComponent1(String file){
+		Vector<String> pois=FileTool.Load(file, "utf-8");
+		Double[] arr=new Double[pois.size()];
+		for(int i=0;i<pois.size();i++){
+			String poi=pois.elementAt(i);
+			String amounts=Tool.getStrByKey(poi, "<amounts>", "</amounts>", "</amounts>");
+			arr[i]=Double.parseDouble(amounts);
+		}
+		int num=arr.length;
+		double index;
+		index=(arr[num-2]-arr[0])/10;
+		for(int i=0;i<arr.length;i++){
+			double db=arr[i];
+			if(db>index){
+				System.out.println(db);
+				FileTool.Dump(pois.elementAt(i), file.replace(".txt", "")+"-pc.txt", "utf-8");
+			}
+		}
+		
+	}
+	public static void PrincipalComponent(String file){
+		Vector<String> pois=FileTool.Load(file, "utf-8");
+		Double[] arr=new Double[pois.size()];
+		for(int i=0;i<pois.size();i++){
+			String poi=pois.elementAt(i);
+			String amounts=Tool.getStrByKey(poi, "<amounts>", "</amounts>", "</amounts>");
+			arr[i]=Double.parseDouble(amounts);
+		}
+		int num=arr.length;
+		double average;
+		average=(arr[num-2]+arr[num-3]+arr[num-4])/30;
+		for(int i=0;i<arr.length;i++){
+			double db=arr[i];
+			if(db>average){
+				System.out.println(db);
+				FileTool.Dump(pois.elementAt(i), file.replace(".txt", "")+"-pc.txt", "utf-8");
+			}
+		}
+		
+	}
+	public static double P_rand(double Lamda){      // 泊松分布
+		 double x=0,b=1,c=Math.exp(-Lamda),u; 
+		 do {
+		  u=Math.random();
+		  b *=u;
+		  if(b>=c)
+		   x++;
+		  }while(b>=c);
+		 return x;
+		 }
 
 	static ChartPanel frame1;
 
@@ -53,7 +113,7 @@ public class Histogram {
 		 * 绘制柱状图
 		 */
 		CategoryDataset dataset = getDataSet(file);
-		JFreeChart chart = ChartFactory.createBarChart3D("吉林省白山市八道江区人口流动情况", // 图表标题
+		JFreeChart chart = ChartFactory.createBarChart3D("浙江省温州市苍南县人口流动情况", // 图表标题
 				"区县", // 目录轴的显示标签
 				"数量", // 数值轴的显示标签
 				dataset, // 数据集
