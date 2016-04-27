@@ -41,18 +41,40 @@ public class Histogram {
 		
 		
 		
-/* 
+
 		 
 		JFrame frame = new JFrame("Java数据统计图");
 		frame.setLayout(new GridLayout(2, 2, 10, 10));
-		new Histogram("D:/Test/浙江省温州市苍南县-sort-pc.txt");
-		frame.add(Histogram.getChartPanel());
-		frame.setBounds(50, 50, 1200, 1000);
-		frame.setVisible(true);
-		*/ 
+		//String[] codeArry={"120111","120112","120113"};
+		//for(int i=0;i<codeArry.length;i++){
+			new Histogram("D:/人口数据/0414重新处理/10级数据-提取每个区县的直方图特征/countFlowin-NewCode-replaced-tidy-countAmounts-sort-MainIngredients.txt","浏阳","430181");
+			frame.add(Histogram.getChartPanel());
+			frame.setBounds(50, 50, 4000, 4000);
+			frame.setVisible(true);
+		//}
 		
-		//System.out.println(P_rand(5));
-		PrincipalComponent1("D:/Test/浙江省温州市苍南县-sort.txt");
+	
+		
+		System.out.println(P_rand(5));
+		//PrincipalComponent1("D:/Test/区县人口流动直方图/浙江省温州市苍南县-sort.txt");
+		
+	}
+	public static void AmountsSort(String file) {
+		Vector<String> people = FileTool.Load(file, "utf-8");
+		double[] arr = new double[people.size()];
+		String[] pois=new String[ people.size()];
+		for (int i = 0; i < people.size(); i++) {
+			String poi = people.elementAt(i);
+			double num = Double.parseDouble(Tool.getStrByKey(poi, "<amounts>", "</amounts>", "</amounts>"));
+			arr[i] = num;
+			pois[i]=poi;
+			}
+		InsertSortArray(people.size(),arr,pois);
+		for(int i=0;i<arr.length;i++){
+			System.out.println(pois[i]);
+			FileTool.Dump(pois[i], file.replace(".txt", "")+"-sort.txt", "utf-8");
+		}
+		
 		
 	}
 	public static void PrincipalComponent1(String file){
@@ -108,12 +130,12 @@ public class Histogram {
 
 	static ChartPanel frame1;
 
-	public Histogram(String file) {
+	public Histogram(String file,String name,String code) {
 		/*
 		 * 绘制柱状图
 		 */
-		CategoryDataset dataset = getDataSet(file);
-		JFreeChart chart = ChartFactory.createBarChart3D("浙江省温州市苍南县人口流动情况", // 图表标题
+		CategoryDataset dataset = getDataSet(file, code);
+		JFreeChart chart = ChartFactory.createBarChart3D(name, // 图表标题
 				"区县", // 目录轴的显示标签
 				"数量", // 数值轴的显示标签
 				dataset, // 数据集
@@ -138,16 +160,21 @@ public class Histogram {
 		frame1 = new ChartPanel(chart, true); // 这里也可以用chartFrame,可以直接生成一个独立的Frame
 	}
 
-	private static CategoryDataset getDataSet(String file) {
+	private static CategoryDataset getDataSet(String file,String code) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		Vector<String> people = FileTool.Load(file, "utf-8");
 		for (int i = 0; i < people.size(); i++) {
 			String poi = people.elementAt(i);
 			double num = Double.parseDouble(Tool.getStrByKey(poi, "<amounts>", "</amounts>", "</amounts>"));
 			String to = Tool.getStrByKey(poi, "<to>", "</to>", "</to>");
-			dataset.addValue(num, "", to);
+			String from=Tool.getStrByKey(poi, "<from>", "</from>", "</from>");
+			
+			if(code.equals(to)){
+				dataset.addValue(num, "", from);
+				System.out.println(poi);
+			}
+			
 		}
-
 		return dataset;
 	}
 
@@ -156,24 +183,7 @@ public class Histogram {
 
 	}
 
-	public static void AmountsSort(String file) {
-		Vector<String> people = FileTool.Load(file, "utf-8");
-		double[] arr = new double[people.size()];
-		String[] pois=new String[ people.size()];
-		for (int i = 0; i < people.size(); i++) {
-			String poi = people.elementAt(i);
-			double num = Double.parseDouble(Tool.getStrByKey(poi, "<amounts>", "</amounts>", "</amounts>"));
-			arr[i] = num;
-			pois[i]=poi;
-			}
-		InsertSortArray(people.size(),arr,pois);
-		for(int i=0;i<arr.length;i++){
-			System.out.println(pois[i]);
-			FileTool.Dump(pois[i], file.replace(".txt", "")+"-sort.txt", "utf-8");
-		}
-		
-		
-	}
+	
 
 	public static void InsertSortArray(int n, double[] arr,String[] pois) {
 	
